@@ -1,34 +1,31 @@
 #!/usr/bin/python3
-from fabric.api import put, run, local, env
-from os import path
+"""create fabfile"""
+from fabric.api import put, run, env
+from fabric.contrib import files
+import os
 
-
-env.hosts = ["54.167.24.215", "54.82.159.235"]
+env.hosts = ['3.238.181.140', '3.236.65.72']
 
 
 def do_deploy(archive_path):
-    """Fabric script that distributes
-    an archive to your web server"""
-
-    if not path.exists(archive_path):
+    """deploy function"""
+    if not os.path.exists(archive_path):
         return False
+
+    data_path = '/data/web_static/releases/'
+    temp = archive_path.split('.')[0]
+    file_name = temp.split('/')[1]
+    dest = data_path + file_name
+
     try:
-        tgzfile = archive_path.split("/")[-1]
-        print(tgzfile)
-        filename = tgzfile.split(".")[0]
-        print(filename)
-        pathname = "/data/web_static/releases/" + filename
-        put(archive_path, '/tmp/')
-        run("mkdir -p /data/web_static/releases/{}/".format(filename))
-        run("tar -zxvf /tmp/{} -C /data/web_static/releases/{}/"
-            .format(tgzfile, filename))
-        run("rm /tmp/{}".format(tgzfile))
-        run("mv /data/web_static/releases/{}/web_static/*\
-            /data/web_static/releases/{}/".format(filename, filename))
-        run("rm -rf /data/web_static/releases/{}/web_static".format(filename))
-        run("rm -rf /data/web_static/current")
-        run("ln -s /data/web_static/releases/{}/ /data/web_static/current"
-            .format(filename))
+        put(archive_path, '/tmp')
+        run('sudo mkdir -p {}'.format(dest))
+        run('sudo tar -xzf /tmp/{}.tgz -C {}'.format(file_name, dest))
+        run('sudo rm -f /tmp/{}.tgz'.format(file_name))
+        run('sudo mv {}/web_static/* {}/'.format(dest, dest))
+        run('sudo rm -rf {}/web_static/'.format(dest))
+        run('sudo rm -rf /data/web_static/current')
+        run('sudo ln -s {} /data/web_static/current'.format(dest))
         return True
-    except Exception as e:
+    except RuntimeError:
         return False
