@@ -1,16 +1,21 @@
 #!/usr/bin/python3
-"""Importing the needed framework"""
+'''
+Script that starts a Flask web application:
+    The web application must be listening on 0.0.0.0, port 5000
+    Routes:
+        /: display “Hello HBNB!”
+    The option strict_slashes=False must be used in the route definition
+'''
 from flask import Flask
-
 
 app = Flask(__name__)
 
 
-@app.route("/airbnb-onepage/", strict_slashes=False)
+@app.route("/", strict_slashes=False)
 def hello():
-    """Function that returns a simple string"""
-    return "Hello HBNB!"
+    '''Displays "Hello HBNB!"'''
+    return 'Hello HBNB!'
 
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
