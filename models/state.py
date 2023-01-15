@@ -1,20 +1,22 @@
 #!/usr/bin/python3
-""" State Module for HBNB project """
+
+''' State Module for HBNB project '''
 from models.base_model import BaseModel, Base
-from models import HBNB_TYPE_STORAGE
+from models import storage_type
+from models.city import City
 from sqlalchemy import Column, String
+from sqlalchemy.orm import relationship
 
 
 class State(BaseModel, Base):
-    """ State class """
+    ''' State class / table model'''
     __tablename__ = 'states'
-    if HBNB_TYPE_STORAGE == 'db':
-        name = Column(String(128),
-                      nullable=False)
+    if storage_type == 'db':
+        name = Column(String(128), nullable=False)
         cities = relationship('City', backref='state',
                               cascade='all, delete, delete-orphan')
     else:
-        name = ""
+        name = ''
 
         @property
         def cities(self):
@@ -29,7 +31,3 @@ class State(BaseModel, Base):
                 if city.state_id == self.id:
                     related_cities.append(city)
             return related_cities
-
-    def __init__(self, *args, **kwargs):
-        """Initialises Amenity"""
-        super().__init__(*args, **kwargs)
